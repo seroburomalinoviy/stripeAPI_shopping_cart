@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ item.id }}</title>
+</head>
+<body>
+<h2>Name item: {{ item.name }}</h2>
+<h5>Description: {{ item.description }}</h5>
+<h3>Price: {{ item.price }}</h3>
+
+
+<form action="/buy/{{ item.id }}/" method="POST">
+        {% csrf_token %}
+
+            <button type="submit"><b>Buy</b></button>
+
+    </form>
+</body>
+</html>
