@@ -16,5 +16,11 @@
             <button type="submit"><b>Buy</b></button>
 
     </form>
+<form action="/shopping_cart/" method="POST">
+{% csrf_token %}
+
+            <button type="submit"><b>Add to cart</b></button>
+
+    </form>
 </body>
 </html>

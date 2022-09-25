@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order</title>
+</head>
+<body>
+<h2>Shopping cart</h2>
+<hr>
+
+{% for item in items %}
+    <p>Name: <b>{{ item.item.name }}</b></p>
+    <p>Price: <b>{{ item.item.price }}</b></p>
+    <p>quantity:
+        <b>{{ item.quantity }}</b>
+
+    </p>
+    <form action="/edit_sh_cart/{{ item.item.id }}/" method="POST">
+    {% csrf_token %}
+    <button name="add" type="submit">add</button>
+    </form>
+    <form action="/edit_sh_cart/{{ item.item.id }}/" method="POST">
+    {% csrf_token %}
+    <button name="remove" type="submit">remove</button>
+    </form>
+
+
+    <hr>
+{% endfor %}
+
+<form action="/order/" method="POST">
+    {% csrf_token %}
+    <button type="submit">Create order</button>
+</form>
+
+
+</body>
+</html>
