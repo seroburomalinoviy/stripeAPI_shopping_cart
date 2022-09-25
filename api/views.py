@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 import stripe
-from .models import Item, Order, ItemInstance
+from .models import Item, Order
 from stripePay.settings import ALLOWED_HOSTS
 from config_reader import load_config
 
@@ -47,8 +47,8 @@ def buy(request, buy_id):
 
 
 def success(request):
-    completed_order = ItemInstance.object.all().delete()
-    completed_order.save()
+    # delete order of the item
+    completed_order = Order.objects.all().delete()
     return render(request, 'stripeApi_template/success.html')
 
 
@@ -57,12 +57,11 @@ def cancelled(request):
 
 def shopping_cart(request):
     items = Item.objects.all()
-    if not ItemInstance.objects.all():
-        # create order
+    if not Order.objects.all():
         for item in items:
-            sample_item = ItemInstance(item=item)
+            sample_item = Order(item=item)
             sample_item.save()
-    sample_items = ItemInstance.objects.all()
+    sample_items = Order.objects.all()
     context = {'items': sample_items}
 
     return render(request, 'stripeApi_template/shopping_cart.html', context)
@@ -72,52 +71,49 @@ def edit_sh_cart(request, item_id):
 
     if request.method == 'POST':
         item = Item.objects.get(id=item_id)
-    if 'add' in request.POST:
-        new_item = ItemInstance.objects.get(item=item)
-        ItemInstance.objects.filter(item=item).update(quantity=new_item.quantity+ 1)
-        new_item.refresh_from_db()
-    elif 'remove' in request.POST:
-        try:
-            new_item = ItemInstance.objects.get(item=item)
-            ItemInstance.objects.filter(item=item).update(quantity=new_item.quantity- 1)
+
+        if 'add' in request.POST:
+            new_item = Order.objects.get(item=item)
+            Order.objects.filter(item=item).update(quantity=new_item.quantity+ 1)
             new_item.refresh_from_db()
-        except:
-            new_item = ItemInstance.objects.get(item=item)
-            ItemInstance.objects.filter(item=item).update(quantity=0)
-            new_item.refresh_from_db()
+        elif 'remove' in request.POST:
+            try:
+                new_item = Order.objects.get(item=item)
+                Order.objects.filter(item=item).update(quantity=new_item.quantity- 1)
+            except:
+                new_item = Order.objects.get(item=item)
+                Order.objects.filter(item=item).update(quantity=0)
+                new_item.refresh_from_db()
+                # try delete from order
 
-
-        # update order
-
-        # order = Order.objects.create()
-        # order.item.add(new_item)
-        # order.save()
-
-    items = ItemInstance.objects.all()
+    items = Order.objects.all()
 
     context = {'items': items}
 
     return render(request, 'stripeApi_template/shopping_cart.html', context)
 
+
 def order(request):
+
     config = load_config('config/settings.ini')
     stripe.api_key = config.token
-    # items = order.objects.first() #? ==ItemInstance.objects.all()
-    items = ItemInstance.objects.all()
+
+    items = Order.objects.all()
+
     line_items =[]
     for item in items:
-        line_item={
-        'price_data': {
-                'currency': 'usd',
-                'product_data': {
-                    'name': item.item.name,
+        if item.quantity != 0:
+            line_item={
+            'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': item.item.name,
+                    },
+                    'unit_amount': int(item.item.price * 100),
                 },
-                'unit_amount': int(item.item.price * 100),
-            },
-            'quantity': item.quantity,
-        }
-        line_items.append(line_item)
-
+                'quantity': item.quantity,
+            }
+            line_items.append(line_item)
 
     session = stripe.checkout.Session.create(
         line_items=line_items,

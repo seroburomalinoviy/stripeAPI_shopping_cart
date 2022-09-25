@@ -2,7 +2,7 @@ from django.db import models
 # Create your models here.
 
 
-class ItemInstance(models.Model):
+class Order(models.Model):
     """Model represent the instance of the item"""
     item = models.ForeignKey('Item', on_delete=models.CASCADE, null=True)
     quantity = models.PositiveIntegerField(default=0)
@@ -19,13 +19,6 @@ class Item(models.Model):
     def __str__(self):
         return self.name
 
-
-class Order(models.Model):
-    item = models.ManyToManyField(ItemInstance, blank=True)
-    total_price = models.PositiveIntegerField(default=0)
-
-    def __str__(self):
-        return str(self.id)
 
 
 
