@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = env("DEBUG", default=0)
 
-ALLOWED_HOSTS = ['http://127.0.0.1:8000/', '127.0.0.1', 'localhost', 'http://2.56.91.105/', '2.56.91.105']
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(" ")
 
 HOME_URL = 'http://2.56.91.105/'
 
