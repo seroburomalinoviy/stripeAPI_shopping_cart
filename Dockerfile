@@ -1,7 +1,7 @@
 # pull official base image
 FROM python:3.9.13-alpine
 # set work directory
-WORKDIR /usr/src/app
+WORKDIR /app
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
