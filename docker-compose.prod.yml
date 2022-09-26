@@ -2,8 +2,8 @@ version: '3.3'
 services:
   web:
     build:
-    context: .
-    dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: Dockerfile.prod
     command: gunicorn stripePay.wsgi:application --bind 0.0.0.0:8000
     expose:
       - 8000
