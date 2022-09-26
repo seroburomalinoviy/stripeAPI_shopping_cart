@@ -3,13 +3,18 @@ services:
    web:
        build:
         context: .
-        dockerfile: Dockerfile.prod
-       command: gunicorn stripePay.wsgi:application --bind 0.0.0.0:8000
+        dockerfile: Dockerfile
+       command: gunicorn api.wsgi:application --bind 0.0.0.0:8000
        expose:
            - 8000
-   nginx:
-     build: ./nginx
-     ports:
-       - 1337:80
+   server:
+     image: nginx:alpine
+     restart: always
      depends_on:
        - web
+     ports:
+       - '80:80'
+       - '443:443'
+     volumes:
+       - ./nginx.conf:/etc/nginx/nginx.conf
+
