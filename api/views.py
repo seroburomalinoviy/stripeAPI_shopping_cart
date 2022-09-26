@@ -1,17 +1,18 @@
 from django.shortcuts import render, redirect
 import stripe
 from .models import Item, Order
-from stripePay.settings import ALLOWED_HOSTS
-from config_reader import load_config
+import environ
+from stripePay.settings import HOME_URL
 
-
+env = environ.Env()
+environ.Env.read_env('.env')
 # Create your views here.
 
 
 def index(request):
     """HomePAGE"""
 
-    context = {'url': ALLOWED_HOSTS[0]}
+    context = {'url': '2.56.91.105'}
     return render(request, 'stripeApi_template/index.html', context)
 
 
@@ -23,8 +24,7 @@ def item(request, item_id):
 
 
 def buy(request, buy_id):
-    config = load_config('config/settings.ini')
-    stripe.api_key = config.token
+    stripe.api_key = env("TOKEN")
 
     item = Item.objects.get(id=buy_id)
     session = stripe.checkout.Session.create(
@@ -39,8 +39,8 @@ def buy(request, buy_id):
             'quantity': 1,
         }],
         mode='payment',
-        success_url=ALLOWED_HOSTS[0]+'success.html',
-        cancel_url=ALLOWED_HOSTS[0]+'cancelled.html',
+        success_url=HOME_URL + 'success.html',
+        cancel_url=HOME_URL + 'cancelled.html',
     )
 
     return redirect(session.url, code=303)
@@ -95,8 +95,7 @@ def edit_sh_cart(request, item_id):
 
 def order(request):
 
-    config = load_config('config/settings.ini')
-    stripe.api_key = config.token
+    stripe.api_key = env("TOKEN")
 
     items = Order.objects.all()
 
@@ -118,8 +117,8 @@ def order(request):
     session = stripe.checkout.Session.create(
         line_items=line_items,
         mode='payment',
-        success_url=ALLOWED_HOSTS[0]+'success.html',
-        cancel_url=ALLOWED_HOSTS[0]+'cancelled.html',
+        success_url=HOME_URL+'success.html',
+        cancel_url=HOME_URL+'cancelled.html',
     )
 
     return redirect(session.url, code=303)
