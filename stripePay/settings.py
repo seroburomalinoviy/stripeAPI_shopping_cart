@@ -32,7 +32,7 @@ DEBUG = env("DEBUG", default=0)
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(" ")
 
-HOME_URL = 'http://2.56.91.105/'
+HOME_URL = 'http://0.0.0.0:8000'
 
 # Application definition
 
