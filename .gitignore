@@ -1,3 +1,5 @@
 settings.ini
 venv
 .env
+docker-compose.prod.yml
+Dockerfile.prod
