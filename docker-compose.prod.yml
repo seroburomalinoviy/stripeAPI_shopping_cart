@@ -1,7 +1,9 @@
 version: '3.3'
 services:
    web:
-       build: .
+       build:
+        context: ./app
+        dockerfile: Dockerfile.prod
        command: gunicorn stripePay.wsgi:application --bind 0.0.0.0:8000
        ports:
            - 8000:8000
