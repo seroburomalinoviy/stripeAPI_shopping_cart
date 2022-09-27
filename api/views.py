@@ -12,7 +12,7 @@ environ.Env.read_env('.env')
 def index(request):
     """HomePAGE"""
 
-    context = {'url': '2.56.91.105'}
+    context = {'url': HOME_URL}
     return render(request, 'stripeApi_template/index.html', context)
 
 
